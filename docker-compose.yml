@@ -1,0 +1,33 @@
+version: '3'
+services:
+  db:
+    image: mysql
+    volumes:
+      - ./data:/var/lib/mysql
+    env_file: ./environment/mysql-env.list
+
+  web:
+    build: .
+    image: aleksxp/laravel
+    expose:
+      - "9000"
+    ports:
+      - "8080:80"
+    links:
+      - db
+    volumes:
+      - ./source:/var/www/html/
+    environment:
+      XDEBUG_CONFIG: remote_host=172.17.0.1
+
+  mailer:
+    image: djfarrelly/maildev
+    ports:
+      - "1080:80"
+      - "25"
+
+  composer:
+    image: composer/composer:alpine
+
+  redis:
+    image: redis:alpine
